@@ -1,0 +1,40 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df=pd.read_csv('/content/Dataset .csv')
+df
+
+import folium
+
+map_center = [df['Latitude'].mean(), df['Longitude'].mean()]
+restaurant_map = folium.Map(location=map_center, zoom_start=6)
+for idx, row in df.iterrows():
+    folium.Marker(
+        [row['Latitude'], row['Longitude']],
+        popup=f"Rating: {row['Aggregate rating']}, City: {row['City']}",
+        icon=folium.Icon(color='green' if row['Aggregate rating'] >= 4 else 'orange')
+    ).add_to(restaurant_map)
+restaurant_map.save('/content/Dataset .csv')
+restaurant_map
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+city_counts = df['City'].value_counts()
+plt.figure(figsize=(12, 6))
+sns.barplot(x=city_counts.head(10).index, y=city_counts.head(10).values, palette="viridis")
+plt.xticks(rotation=45)
+plt.title("Top 10 Cities by Number of Restaurants")
+plt.xlabel("City")
+plt.ylabel("Number of Restaurants")
+plt.show()
+
+import matplotlib.pyplot as plt
+city_ratings = df.groupby('City')['Aggregate rating'].mean()
+plt.figure(figsize=(10, 8))
+city_ratings.plot(kind='bar')
+plt.title('Average Restaurant Rating by City')
+plt.xlabel('City')
+plt.ylabel('Average Rating')
+plt.show()
